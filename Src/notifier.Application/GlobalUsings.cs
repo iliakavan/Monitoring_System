@@ -1,0 +1,10 @@
+﻿global using FluentValidation;
+global using MediatR;
+global using Microsoft.Extensions.DependencyInjection;
+global using notifier.Application.Common.Validationbehavior;
+global using notifier.Application.Common.Result;
+global using notifier.Domain.UnitOfWork;
+global using notifier.Domain.Models;
+global using notifier.Domain.Enum;
+global using notifier.Domain.Dto;
+global using BC = BCrypt.Net.BCrypt;

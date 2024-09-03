@@ -1,0 +1,18 @@
+﻿global using Microsoft.EntityFrameworkCore;
+global using notifier.Domain.Models;
+global using notifier.Domain.Repositories;
+global using notifier.Domain.BaseModel;
+global using notifier.Infrastructure.Extension;
+global using notifier.Infrastructure.Data;
+global using notifier.Domain.UnitOfWork;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.DependencyInjection;
+global using notifier.Infrastructure.Configurations;
+global using notifier.Infrastructure.Repositories;
+global using notifier.Infrastructure.UnitsOfWork;
+global using Microsoft.EntityFrameworkCore.Metadata.Builders;
+global using notifier.Application.BackgroundService;
+global using notifier.Infrastructure.BackgroundServices;
+global using notifier.Domain.Enum;
+global using BC = BCrypt.Net.BCrypt;
+global using notifier.Domain.Dto;
