@@ -4,7 +4,7 @@
 
 
 
-public interface IUnitsOfWorks
+public interface IUnitsOfWorks : IDisposable
 {
     IProjectOffcialRepository ProjectOffcialRepo { get; }
     

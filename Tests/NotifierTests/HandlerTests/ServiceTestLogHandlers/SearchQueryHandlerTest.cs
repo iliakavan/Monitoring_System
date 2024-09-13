@@ -25,7 +25,7 @@ public class SearchQueryHandlerTest
         DateTime? enddateEn = request.EndDate.ToGregorianDateTime();
 
         _unitsOfWorksSubstitute.ServiceTestLogRepo.Search(startdateEN, enddateEn, request.Serviceid)
-            .Returns(Task.FromResult<IEnumerable<ServiceTestLog>>(null));
+            .Returns(Task.FromResult<IEnumerable<ServiceTestLog>>(null!));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);

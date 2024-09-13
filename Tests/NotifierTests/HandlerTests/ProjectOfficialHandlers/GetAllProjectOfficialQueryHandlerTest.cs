@@ -44,7 +44,7 @@ public class GetAllProjectOfficialQueryHandlerTest
     {
         // Arrange
         _unitOfWorkSubstitute.ProjectOffcialRepo.GetAll()
-            .Returns(Task.FromResult<IEnumerable<ProjectOfficial>>(null));
+            .Returns(Task.FromResult<IEnumerable<ProjectOfficial>>(null!));
 
         var request = new GetAllProjectOfficialQueryRequest();
 

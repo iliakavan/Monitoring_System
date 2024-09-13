@@ -19,7 +19,7 @@ public class GetAllProjectQueryHandlerTest
     {
         // Arrange
         var request = new GetAllProjectQueryRequest();
-        _unitOfWorkSubstitute.ProjectRepo.GetAll().Returns(Task.FromResult<IEnumerable<Project>>(null));
+        _unitOfWorkSubstitute.ProjectRepo.GetAll().Returns(Task.FromResult<IEnumerable<Project>>(null!));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);

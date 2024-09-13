@@ -15,7 +15,11 @@ public class ProjectOffcialRepository(AppDbcontext context) : IProjectOffcialRep
     public void Delete(ProjectOfficial model)
     {
         model.IsActive = false;
-        Update(model);
+    }
+
+    public void Dispose()
+    {
+        _context.Dispose();
     }
 
     public async Task<IEnumerable<string>> FetchTelegramId(int projectId)
@@ -38,7 +42,7 @@ public class ProjectOffcialRepository(AppDbcontext context) : IProjectOffcialRep
         DateTime start = StartDate ?? DateTime.MinValue;
         DateTime end = EndDate ?? DateTime.MaxValue;
         // Apply date range filter
-        var query = _context.ProjectOfficials.Include(p => p.Project).AsQueryable().Where(x => x.RecordDate.Date >= start && x.RecordDate.Date <= end);
+        var query = _context.ProjectOfficials.AsQueryable().Where(x => x.RecordDate.Date >= start && x.RecordDate.Date <= end);
 
         // Apply additional filters only if parameters are provided
         if (!string.IsNullOrEmpty(responsible))

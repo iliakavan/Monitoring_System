@@ -35,8 +35,8 @@ public class SearchServiceNotificationQueryHandlerTest
         DateTime? startdateEN = request.StartDate.ToGregorianDateTime();
         DateTime? enddateEn = request.EndDate.ToGregorianDateTime();
 
-        _unitsOfWorksSubstitute.NotificationRepo.Search(startdateEN, enddateEn, request.NotifeType, request.ServiceId, request.ServicetestId, request.ProjectId)
-            .Returns(await Task.FromResult<IEnumerable<ServiceNotificationDto?>>(null));
+        _unitsOfWorksSubstitute.NotificationRepo.Search(startdateEN, enddateEn, request.NotifeType, request.ServicetestId, request.ServiceId, request.ProjectId)
+            .Returns(await Task.FromResult<IEnumerable<ServiceNotificationDto?>>(null!));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);
@@ -65,7 +65,7 @@ public class SearchServiceNotificationQueryHandlerTest
         DateTime? startdateEN = request.StartDate.ToGregorianDateTime();
         DateTime? enddateEn = request.EndDate.ToGregorianDateTime();
 
-        _unitsOfWorksSubstitute.NotificationRepo.Search(startdateEN, enddateEn, request.NotifeType, request.ServiceId, request.ServicetestId, request.ProjectId)
+        _unitsOfWorksSubstitute.NotificationRepo.Search(startdateEN, enddateEn, request.NotifeType, request.ServicetestId, request.ServiceId, request.ProjectId)
             .Returns(await Task.FromResult(Enumerable.Empty<ServiceNotificationDto?>()));
 
         // Act
@@ -100,7 +100,7 @@ public class SearchServiceNotificationQueryHandlerTest
             new ServiceNotificationDto {NotificationType = notifier.Domain.Enum.NotificationType.Sms.ToString(), ServiceTestId = 3, RecordDate = DateTime.Now,MessageFormat = "kmsdm",  MessageSuccess = "test" }
         };
 
-        _unitsOfWorksSubstitute.NotificationRepo.Search(startdateEN, enddateEn, request.NotifeType, request.ServiceId,request.ServicetestId,request.ProjectId)
+        _unitsOfWorksSubstitute.NotificationRepo.Search(startdateEN, enddateEn, request.NotifeType, request.ServicetestId, request.ServiceId,request.ProjectId)!
             .Returns(Task.FromResult<IEnumerable<ServiceNotificationDto>>(mockNotifications));
 
         // Act

@@ -49,7 +49,7 @@ services.AddSwaggerGen(c =>
 services.RegisterInfrastructure(builder.Configuration);
 services.RegisterApplication();
 services.AddHttpClient();
-services.AddTransient<IHangfireMethods, HangfireMethods>();
+services.AddSingleton<IHangfireMethods, HangfireMethods>();
 
 services.AddHangfire(configuration => configuration
     .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
@@ -85,7 +85,7 @@ app.UseAuthorization();
 app.UseMiddleware<GlobalExceptionHandler>();
 
 var hangfires = app.Services.GetService<IHangfireMethods>();
-hangfires?.TestServices();
+hangfires?.Run();
 
 #if !DEBUG
 app.Use((context, next) =>

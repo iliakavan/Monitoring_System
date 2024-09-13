@@ -12,7 +12,7 @@ public class DeleteProjectCommandHandler(IUnitsOfWorks uow) : IRequestHandler<De
             return new ResultResponse() { Success = false};
         }
 
-        var project = await _unitsOfWorks.ProjectRepo.GetById(request.Id);
+        var project = await _unitsOfWorks.ProjectRepo.GetbyIdIncludeAll(request.Id);
 
         if(project is null) 
         {

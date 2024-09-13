@@ -1,4 +1,6 @@
-﻿namespace notifier.Infrastructure.Repositories;
+﻿using System.Collections;
+
+namespace notifier.Infrastructure.Repositories;
 
 
 
@@ -15,10 +17,6 @@ public class ServiceTestRepository(AppDbcontext context) : IServiceTestRepositor
 
     public void Delete(ServiceTest model)
     {
-        if (model is null) return;
-
-        model.IsActive = false;
-
         if (model.ServiceNotifications is not null &&  model.ServiceNotifications.Count > 0)
         {
             foreach (var notification in model.ServiceNotifications) 
@@ -26,7 +24,12 @@ public class ServiceTestRepository(AppDbcontext context) : IServiceTestRepositor
                 notification.IsActive = false;
             }
         }
-        Update(model);
+        model.IsActive = false;
+    }
+
+    public void Dispose()
+    {
+        _context.Dispose();
     }
 
     public async Task<IEnumerable<ServiceTest>> GetAll()
@@ -39,13 +42,23 @@ public class ServiceTestRepository(AppDbcontext context) : IServiceTestRepositor
         return await _context.ServiceTests.Where(S => S.Id == id).FirstOrDefaultAsync();
     }
 
+    public async Task<ServiceTest?> GetByIdincludeAll(int ID)
+    {
+        return await _context.ServiceTests.Where(St => St.Id == ID).Include(Sn => Sn.ServiceNotifications).FirstOrDefaultAsync();
+    }
+
+    public async Task<IEnumerable<int>> GetPeriodTime()
+    {
+        return await _context.ServiceTests.AsQueryable().Select(x => x.PriodTime).ToListAsync();
+    }
+
     public async Task<IEnumerable<ServiceTestDto>> Search(DateTime? StartDate, DateTime? EndDate,int? ServiceId,int? ProjectId)
     {
         DateTime start = StartDate ?? DateTime.MinValue;
 
         DateTime end = EndDate ?? DateTime.MaxValue;
         
-        var query = _context.ServiceTests.Include(S => S.Service).ThenInclude(S => S.Project).Where(x => x.RecordDate.Date >= start && x.RecordDate.Date <= end);
+        var query = _context.ServiceTests.AsQueryable().Where(x => x.RecordDate.Date >= start && x.RecordDate.Date <= end);
         
         if(ServiceId is not null) 
         {

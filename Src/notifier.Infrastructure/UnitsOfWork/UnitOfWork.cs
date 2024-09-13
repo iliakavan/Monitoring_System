@@ -40,6 +40,11 @@ public class UnitOfWork
 
     public IUserRepository UserRepo => _userRepository;
 
+    public void Dispose()
+    {
+        _context.Dispose();
+    }
+
     public async Task SaveChanges() 
     {
         await _context.SaveChangesAsync();

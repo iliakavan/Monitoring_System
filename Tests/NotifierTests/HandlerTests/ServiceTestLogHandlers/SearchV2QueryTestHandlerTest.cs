@@ -44,7 +44,7 @@ public class SearchV2QueryTestHandlerTest
             request.Ip,
             request.Port,
             request.Url
-        ).Returns(Task.FromResult<IEnumerable<object>>(null));
+        ).Returns(Task.FromResult<IEnumerable<object>>(null!));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);

@@ -14,6 +14,7 @@ public class ProjectRepository(AppDbcontext context) : IProjectRepository
 
     public void Delete(Project model)
     {
+
         if (model.Services != null && model.Services.Count > 0)
         {
             foreach (var service in model.Services)
@@ -31,12 +32,18 @@ public class ProjectRepository(AppDbcontext context) : IProjectRepository
                             }
                         }
                         test.IsActive = false;
+
                     }
                 }
                 service.IsActive = false;
             }
         }
         model.IsActive = false;
+    }
+
+    public void Dispose()
+    {
+        _context.Dispose();
     }
 
     public async Task<IEnumerable<Project>> GetAll()
@@ -49,6 +56,11 @@ public class ProjectRepository(AppDbcontext context) : IProjectRepository
     public async Task<Project?> GetById(int id)
     {
         return await _context.Projects.AsQueryable().Where(P => P.Id == id).FirstOrDefaultAsync();
+    }
+
+    public async Task<Project?> GetbyIdIncludeAll(int id)
+    {
+        return await _context.Projects.Where(p => p.Id == id).Include(P => P.ProjectOfficials).Include(P => P.Services).ThenInclude(S => S.Tests).ThenInclude(T => T.ServiceNotifications).FirstOrDefaultAsync();
     }
 
     public async Task<Project?> GetProjectByTitleAsync(string Title)

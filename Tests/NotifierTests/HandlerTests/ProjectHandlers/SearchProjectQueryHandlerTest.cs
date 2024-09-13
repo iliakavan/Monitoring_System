@@ -29,8 +29,8 @@ public class SearchProjectQueryHandlerTest
         DateTime? startdateEN = request.StartDate.ToGregorianDateTime();
         DateTime? enddateEn = request.EndDate.ToGregorianDateTime();
 
-        _unitsOfWorksSubstitute.ProjectRepo.Search(startdateEN, enddateEn, request.Title)
-            .Returns(Task.FromResult<IEnumerable<Project>>(null));
+        _unitsOfWorksSubstitute.ProjectRepo.Search(startdateEN, enddateEn, request.Title)!
+            .Returns(Task.FromResult<IEnumerable<Project>>(null!));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);
@@ -56,7 +56,7 @@ public class SearchProjectQueryHandlerTest
         DateTime? startdateEN = request.StartDate.ToGregorianDateTime();
         DateTime? enddateEn = request.EndDate.ToGregorianDateTime();
 
-        _unitsOfWorksSubstitute.ProjectRepo.Search(startdateEN, enddateEn, request.Title)
+        _unitsOfWorksSubstitute.ProjectRepo.Search(startdateEN, enddateEn, request.Title)!
             .Returns(Task.FromResult(Enumerable.Empty<Project>()));
 
         // Act
@@ -88,7 +88,7 @@ public class SearchProjectQueryHandlerTest
             new Project { Id = 1, Title = "Test Project", Description = "Description", RecordDate = DateTime.Now }
         };
 
-        _unitsOfWorksSubstitute.ProjectRepo.Search(startdateEN, enddateEn, request.Title)
+        _unitsOfWorksSubstitute.ProjectRepo.Search(startdateEN, enddateEn, request.Title)!
             .Returns(Task.FromResult<IEnumerable<Project>>(mockProjects));
 
         // Act

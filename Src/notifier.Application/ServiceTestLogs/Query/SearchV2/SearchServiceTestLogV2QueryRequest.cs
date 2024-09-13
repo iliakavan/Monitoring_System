@@ -39,4 +39,3 @@ public class SearchServiceTestLogV2QueryRequest : IRequest<ResultResponse<IEnume
 }
 
 
-// DateTime? StartDate, DateTime? EndDate, int? serviceId, string? ResponseCode, TestType? testtype, int? projectId, string? Ip, int? port, string? Url

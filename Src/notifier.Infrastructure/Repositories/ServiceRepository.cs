@@ -38,6 +38,11 @@ public class ServiceRepository(AppDbcontext context) : IServiceRepository
         model.IsActive = false;
     }
 
+    public void Dispose()
+    {
+        _context.Dispose();
+    }
+
     public async Task<IEnumerable<Service>> GetAll()
     {
         return await _context.Services.ToListAsync();
@@ -88,6 +93,7 @@ public class ServiceRepository(AppDbcontext context) : IServiceRepository
         {
             query = query.Where(x => x.ProjectId == projectId.Value);
         }
+
         return await query.Select(service => new ServiceDto
         {
             Id = service.Id,
@@ -96,7 +102,7 @@ public class ServiceRepository(AppDbcontext context) : IServiceRepository
             Url = service.Url,
             Ip = service.Ip,
             Port = service.Port,
-            ProjectTitle = service.Project.Title, // Map the Project title
+            ProjectName = service.Project.Title, // Map the Project title
             ProjectId = service.Project.Id,
             Method = service.Method
         }).ToListAsync();

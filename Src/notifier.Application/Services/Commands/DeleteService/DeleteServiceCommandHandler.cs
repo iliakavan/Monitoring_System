@@ -11,7 +11,7 @@ public class DeleteServiceCommandHandler(IUnitsOfWorks uow) : IRequestHandler<De
         
         if (service is null)
         {
-            return new() { Message = "Project doesn't exist.", Success = false };
+            return new() { Message = "Service doesn't exist.", Success = false };
         }
 
         _unitsOfWorks.ServiceRepo.Delete(service);

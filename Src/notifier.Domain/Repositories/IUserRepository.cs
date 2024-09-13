@@ -2,7 +2,7 @@
 
 
 
-public interface IUserRepository
+public interface IUserRepository : IDisposable
 {
     Task Register(Users user);
 
@@ -12,7 +12,7 @@ public interface IUserRepository
 
     Task<IEnumerable<Users>> GetAll();
 
-    Task<IEnumerable<UserDto>> Search(DateTime? startDate,DateTime? endDate,string? FullName,string? FirstName,string? LastName,string? Email,string? PhoneNumber,Role? role,string? UserName);
+    Task<IEnumerable<UserDto>> Search(DateTime? startDate,DateTime? endDate,string? FirstName,string? LastName,string? Email,string? PhoneNumber,Role? role,string? UserName);
 
     void DeactiveUser(Users user);
     Task<Users?> GetUserByID(int id);

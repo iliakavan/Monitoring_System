@@ -1,4 +1,6 @@
-﻿namespace notifier.Controllers;
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace notifier.Controllers;
 
 
 
@@ -6,11 +8,13 @@
 
 [Route("[controller]")]
 [ApiController]
+
 public class ProjectController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 
     [HttpGet("{Id}")]
+    [Authorize(Roles = "Admin,Manager")]
 
     public async Task<IActionResult> GetProjectById(int Id) 
     {
@@ -28,6 +32,7 @@ public class ProjectController(IMediator mediator) : ControllerBase
 
 
     [HttpPost]
+    [Authorize(Roles = "Admin,Manager")]
 
     public async Task<IActionResult> AddProject([FromBody] AddProjectCommandRequest request) 
     {
@@ -41,6 +46,7 @@ public class ProjectController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Roles = "Admin,Manager")]
     public async Task<IActionResult> UpdateProject([FromBody] UpdateProjectCommandRequest request)
     {
         var result = await _mediator.Send(request);
@@ -54,6 +60,7 @@ public class ProjectController(IMediator mediator) : ControllerBase
 
 
     [HttpDelete("{ID}")]
+    [Authorize(Roles = "Admin,Manager")]
 
     public async Task<IActionResult> DeleteProject(int ID) 
     {
@@ -70,6 +77,7 @@ public class ProjectController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin,Manager")]
     public async Task<IActionResult> GetAll() 
     {
         var query = new GetAllProjectQueryRequest();
@@ -86,12 +94,13 @@ public class ProjectController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet]
-
     [Route("Search")]
+    [Authorize(Roles = "User,Admin,Manager")]
+
 
     public async Task<IActionResult> Search([FromQuery] string? StartDate, [FromQuery] string? EndDate, [FromQuery] string? Title) 
     {
-        var result = await _mediator.Send(new SearchProjectQueryRequest(EndDate, StartDate,Title));
+        var result = await _mediator.Send(new SearchProjectQueryRequest(StartDate, EndDate, Title));
         if (!result.Success)
         {
             return NoContent();

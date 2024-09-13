@@ -33,7 +33,7 @@ public class SearchServiceHandlerTest
         DateTime? enddateEn = request.EndDate.ToGregorianDateTime();
 
         _unitsOfWorksSubstitute.ServiceRepo.Search(startdateEN, enddateEn, request.Title, request.Url, request.Ip, request.Port, request.ProjectId)
-            .Returns(Task.FromResult<IEnumerable<ServiceDto?>>(null));
+            .Returns(Task.FromResult<IEnumerable<ServiceDto?>>(null!));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);
@@ -99,10 +99,9 @@ public class SearchServiceHandlerTest
             new ServiceDto { Id = 1, Title = "Test Service", Url = "http://testservice.com", Ip = "192.168.1.2", Port = 8081, ProjectId = 2,Method = "Get" }
         };
 
-#pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
-        _unitsOfWorksSubstitute?.ServiceRepo.Search(StartDate: startdateEN, enddateEn, request.Title, request.Url, request.Ip, request.Port, request.ProjectId)
-            .Returns(Task.FromResult<IEnumerable<ServiceDto>>(mockServices));
-#pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+        _unitsOfWorksSubstitute?.ServiceRepo.Search(StartDate: startdateEN, enddateEn, request.Title, request.Url, request.Ip, request.Port, request.ProjectId)!
+            .Returns(Task.FromResult<IEnumerable<ServiceDto>>(mockServices!));
+
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);

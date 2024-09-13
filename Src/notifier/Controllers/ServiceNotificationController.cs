@@ -1,4 +1,6 @@
-﻿namespace notifier.Controllers;
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace notifier.Controllers;
 
 
 
@@ -11,6 +13,7 @@ public class ServiceNotificationController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator;
 
     [HttpGet]
+    [Authorize(Roles = "Admin, Manager")]
 
     public async Task<IActionResult> GetServiceNotification([FromQuery] GetServiceNotificationByIdQueryRequest request) 
     {
@@ -27,6 +30,7 @@ public class ServiceNotificationController(IMediator mediator) : ControllerBase
 
     [HttpGet]
     [Route("Get All Service Notification")]
+    [Authorize(Roles = "Admin,Manager")]
 
     public async Task<IActionResult> GetAllServiceNotification() 
     {
@@ -41,10 +45,11 @@ public class ServiceNotificationController(IMediator mediator) : ControllerBase
 
     [HttpGet]
     [Route("Search")]
+    [Authorize(Roles = "User,Admin, Manager")]
 
     public async Task<IActionResult> Search([FromQuery] string? StartDate, [FromQuery] string? EndDate, [FromQuery] NotificationType? notifieType, [FromQuery] int? servicetestid, [FromQuery] int? serviceId,int? projectId)
     {
-        var result = await _mediator.Send(new SearchServiceNotificationQueryRequest(StartDate, EndDate,notifieType, servicetestid,serviceId, projectId));
+        var result = await _mediator.Send(new SearchServiceNotificationQueryRequest(StartDate, EndDate,notifieType,serviceId,servicetestid,projectId));
 
         if (!result.Success)
         {
@@ -54,6 +59,7 @@ public class ServiceNotificationController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin, Manager")]
 
     public async Task<IActionResult> AddServiceNotification([FromBody] AddServiceNotificationCommandRequest request) 
     {
@@ -67,6 +73,7 @@ public class ServiceNotificationController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Roles = "Admin, Manager")]
 
     public async Task<IActionResult> UpdateServiceNotification([FromBody] UpdateServiceNotificationCommandRequest request) 
     {
@@ -80,6 +87,7 @@ public class ServiceNotificationController(IMediator mediator) : ControllerBase
     }
 
     [HttpDelete("{ID}")]
+    [Authorize(Roles = "Admin, Manager")]
 
     public async Task<IActionResult> DeleteServiceNotification(int ID) 
     {

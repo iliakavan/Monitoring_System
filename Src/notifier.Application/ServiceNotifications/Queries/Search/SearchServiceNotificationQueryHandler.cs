@@ -15,7 +15,7 @@ public class SearchServiceNotificationQueryHandler(IUnitsOfWorks uow) : IRequest
     {
         DateTime? startdateEN = request.StartDate.ToGregorianDateTime();
         DateTime? enddateEn = request.EndDate.ToGregorianDateTime();
-        var service = await _unitsOfWorks.NotificationRepo.Search(startdateEN, enddateEn, request.NotifeType,request.ServiceId,request.ServicetestId,request.ProjectId);
+        var service = await _unitsOfWorks.NotificationRepo.Search(startdateEN, enddateEn, request.NotifeType,request.ServicetestId, request.ServiceId,request.ProjectId);
 
         if (service is null || !service.Any())
         {

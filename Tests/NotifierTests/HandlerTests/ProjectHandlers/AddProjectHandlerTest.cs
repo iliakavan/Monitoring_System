@@ -18,7 +18,7 @@ public class AddProjectHandlerTest
     public async Task Handle_NullRequest_ShouldReturnFailureResult()
     {
         // Arrange
-        AddProjectCommandRequest request = null;
+        AddProjectCommandRequest request = null!;
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);

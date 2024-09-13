@@ -21,6 +21,7 @@ public class UserRegesterationCommandHandler(IUnitsOfWorks uow) : IRequestHandle
             Email = request.Email,
             UserName = request.UserName,
             PhoneNumber = request.PhoneNumber,
+            RecordDate = DateTime.Now,
             Password = BC.EnhancedHashPassword(request.Password)
         };
 

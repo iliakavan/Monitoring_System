@@ -36,7 +36,7 @@ public class UpdateProjectOfficialHandlerTest
             Mobile = "123456789"
         };
 
-        _unitOfWorkSubstitute.ProjectOffcialRepo.GetById(1)
+        _unitOfWorkSubstitute.ProjectOffcialRepo.GetById(1)!
             .Returns(Task.FromResult(projectOfficial));
 
         // Act
@@ -56,8 +56,8 @@ public class UpdateProjectOfficialHandlerTest
         // Arrange
         var request = new UpdateProjectOfficialCommandRequest { Id = 1 ,Mobile = "09252155445",Responsible="sdsada",TelegramId="@qwerty"};
 
-        _unitOfWorkSubstitute.ProjectOffcialRepo.GetById(1)
-            .Returns(Task.FromResult<ProjectOfficial>(null));
+        _unitOfWorkSubstitute.ProjectOffcialRepo.GetById(1)!
+            .Returns(Task.FromResult<ProjectOfficial>(null!));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);

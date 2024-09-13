@@ -15,8 +15,7 @@ public class ChangePasswordCommandHandler(IUnitsOfWorks uow) : IRequestHandler<C
             return new() { Success = false };
         }
 
-        user.Password = request.newPassword;
-        _unitsOfWorks.UserRepo.Update(user);
+        user.Password = BC.EnhancedHashPassword(request.newPassword);
         await _unitsOfWorks.SaveChanges();
         return new() { Success = true };
     }

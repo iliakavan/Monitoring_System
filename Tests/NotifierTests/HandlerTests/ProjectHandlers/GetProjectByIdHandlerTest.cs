@@ -20,7 +20,7 @@ public class GetProjectByIdHandlerTest
     {
         // Arrange
         var request = new GetProjectByIdQueryRequest { Id = 1 };
-        _unitOfWorkSubstitute.ProjectRepo.GetById(1).Returns(Task.FromResult<Project>(null));
+        _unitOfWorkSubstitute.ProjectRepo.GetById(1)!.Returns(Task.FromResult<Project>(null!));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);
@@ -36,7 +36,7 @@ public class GetProjectByIdHandlerTest
         // Arrange
         var project = new Project { Id = 1, Title = "Test Project", Description = "Description" };
         var request = new GetProjectByIdQueryRequest { Id = 1 };
-        _unitOfWorkSubstitute.ProjectRepo.GetById(1).Returns(Task.FromResult(project));
+        _unitOfWorkSubstitute.ProjectRepo.GetById(1)!.Returns(Task.FromResult(project));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);

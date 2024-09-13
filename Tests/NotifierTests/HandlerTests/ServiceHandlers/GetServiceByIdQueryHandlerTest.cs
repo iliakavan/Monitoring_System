@@ -51,7 +51,7 @@ public class GetServiceByIdQueryHandlerTest
     {
         // Arrange
         var serviceId = 1;
-        _unitsOfWorks.ServiceRepo.GetById(serviceId).Returns((Service)null);
+        _unitsOfWorks.ServiceRepo.GetById(serviceId).Returns((Service)null!);
 
         var request = new GetServiceByIdQueryRequest { Id = serviceId };
 

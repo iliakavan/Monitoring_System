@@ -1,4 +1,5 @@
-﻿using notifier.Application.ServiceTests.Command.TestServices;
+﻿using Microsoft.AspNetCore.Authorization;
+using notifier.Application.ServiceTests.Command.TestServices;
 
 namespace notifier.Controllers;
 
@@ -12,6 +13,7 @@ public class ServiceTestController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator;
     
     [HttpGet]
+    [Authorize(Roles = "Admin, Manager")]
 
     public async Task<IActionResult> GetServiceTests() 
     {
@@ -27,8 +29,8 @@ public class ServiceTestController(IMediator mediator) : ControllerBase
 
 
     [HttpGet]
-
     [Route("GetServiceTest")]
+    [Authorize(Roles = "Admin, Manager")]
 
     public async Task<IActionResult> GetServiceTestById([FromQuery] GetServiceTestByIdQueryRequest request) 
     {
@@ -42,8 +44,8 @@ public class ServiceTestController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet]
-
     [Route("Test")]
+    [Authorize(Roles = "Admin, Manager")]
 
     public async Task<IActionResult> Test()
     {
@@ -59,6 +61,7 @@ public class ServiceTestController(IMediator mediator) : ControllerBase
 
     [HttpGet]
     [Route("Search")]
+    [Authorize(Roles = "User,Admin, Manager")]
 
     public async Task<IActionResult> Search([FromQuery] string? StartDate, [FromQuery] string? EndDate, [FromQuery] int? ServiceId, [FromQuery] int? ProjectId) 
     {
@@ -74,6 +77,7 @@ public class ServiceTestController(IMediator mediator) : ControllerBase
 
 
     [HttpPost]
+    [Authorize(Roles = "Admin, Manager")]
 
     public async Task<IActionResult> AddServiceTest([FromBody] AddServiceTestCommandRequest request) 
     {
@@ -87,6 +91,7 @@ public class ServiceTestController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Roles = "Admin,Manager")]
 
     public async Task<IActionResult> UpdateServiceTest([FromBody] UpdateServiceTestCommandRequest request)
     {
@@ -100,6 +105,7 @@ public class ServiceTestController(IMediator mediator) : ControllerBase
     }
 
     [HttpDelete("{ID}")]
+    [Authorize(Roles = "Admin, Manager")]
 
     public async Task<IActionResult> DeleteServiceTest(int ID) 
     {

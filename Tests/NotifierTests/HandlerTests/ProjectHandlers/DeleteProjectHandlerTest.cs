@@ -18,10 +18,10 @@ public class DeleteProjectHandlerTest
     public async Task Handle_NullRequest_ShouldReturnFailureResult()
     {
         // Arrange
-        DeleteProjectCommandRequest request = null;
+        DeleteProjectCommandRequest request = null!;
 
         // Act
-        var result = await _handler.Handle(request, CancellationToken.None);
+        var result = await _handler.Handle(request!, CancellationToken.None);
 
         // Assert
         result.Success.Should().BeFalse();
@@ -32,7 +32,7 @@ public class DeleteProjectHandlerTest
     {
         // Arrange
         var request = new DeleteProjectCommandRequest { Id = 1 };
-        _unitOfWorkSubstitute.ProjectRepo.GetById(1).Returns(Task.FromResult<Project>(null));
+        _unitOfWorkSubstitute.ProjectRepo.GetbyIdIncludeAll(1)!.Returns(Task.FromResult<Project>(null!));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);
@@ -48,7 +48,7 @@ public class DeleteProjectHandlerTest
         // Arrange
         var project = new Project { Id = 1, Title = "Test Project" };
         var request = new DeleteProjectCommandRequest { Id = 1 };
-        _unitOfWorkSubstitute.ProjectRepo.GetById(1).Returns(Task.FromResult(project));
+        _unitOfWorkSubstitute.ProjectRepo.GetbyIdIncludeAll(1)!.Returns(Task.FromResult(project));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);
@@ -64,7 +64,7 @@ public class DeleteProjectHandlerTest
         // Arrange
         var project = new Project { Id = 1, Title = "Test Project" };
         var request = new DeleteProjectCommandRequest { Id = 1 };
-        _unitOfWorkSubstitute.ProjectRepo.GetById(1).Returns(Task.FromResult(project));
+        _unitOfWorkSubstitute.ProjectRepo.GetbyIdIncludeAll(1)!.Returns(Task.FromResult(project));
 
         // Act
         await _handler.Handle(request, CancellationToken.None);

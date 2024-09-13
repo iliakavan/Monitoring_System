@@ -18,7 +18,7 @@ public class UserRegesterationCommandHandlerTests
     public async Task Handle_ShouldReturnFailureResult_WhenRequestIsNull()
     {
         // Arrange
-        UserRegesterationCommandRequest request = null;
+        UserRegesterationCommandRequest request = null!;
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);

@@ -19,7 +19,7 @@ public class GetAllServiceQueryHandlerTest
     public async Task Handle_ShouldReturnFailedResult_WhenNoServicesFound()
     {
         // Arrange
-        _unitsOfWorks.ServiceRepo.GetAll().Returns(Task.FromResult<IEnumerable<Service>>(null));
+        _unitsOfWorks.ServiceRepo.GetAll().Returns(Task.FromResult<IEnumerable<Service>>(null!));
 
         var request = new GetAllServiceQueryRequest();
 

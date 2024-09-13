@@ -180,7 +180,7 @@ public class ProjectControllerTests
         string title = "Sample Project";
 
         var expectedResponse = new ResultResponse<IEnumerable<Project>> { Success = true };
-        _mediator.Send(Arg.Any<SearchProjectQueryRequest>()).Returns(expectedResponse);
+        _mediator.Send(Arg.Any<SearchProjectQueryRequest>())!.Returns(expectedResponse);
 
         // Act
         var result = await _controller.Search(startDate, endDate, title);
@@ -199,7 +199,7 @@ public class ProjectControllerTests
         string title = "Nonexistent Project";
 
         var expectedResponse = new ResultResponse<IEnumerable<Project>>() { Success = false };
-        _mediator.Send(Arg.Any<SearchProjectQueryRequest>()).Returns(expectedResponse);
+        _mediator.Send(Arg.Any<SearchProjectQueryRequest>())!.Returns(expectedResponse);
 
         // Act
         var result = await _controller.Search(startDate, endDate, title);

@@ -19,7 +19,7 @@ public class AddServiceCommandHandlerTest
     public async Task Handle_ShouldReturnFailure_WhenRequestIsNull()
     {
         // Arrange
-        AddServiceCommandRequest request = null;
+        AddServiceCommandRequest request = null!;
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);

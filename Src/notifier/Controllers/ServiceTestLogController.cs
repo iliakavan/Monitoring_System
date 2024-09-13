@@ -1,4 +1,5 @@
-﻿using notifier.Application.ServiceTestLogs.Query.SearchV1;
+﻿using Microsoft.AspNetCore.Authorization;
+using notifier.Application.ServiceTestLogs.Query.SearchV1;
 using notifier.Application.ServiceTestLogs.Query.SearchV2;
 
 namespace notifier.Controllers;
@@ -26,6 +27,7 @@ public class ServiceTestLogController(IMediator mediator) : ControllerBase
 
     [HttpGet]
     [Route("Search")]
+    [Authorize(Roles = "User,Admin, Manager")]
 
     public async Task<IActionResult> Search([FromQuery] string? Start, [FromQuery] string? End, [FromQuery] int? serviceId, [FromQuery] string? responseCode, [FromQuery] TestType? testtype, [FromQuery] int? projectId, [FromQuery] string? ip, [FromQuery] int? port, [FromQuery] string? url) 
     {

@@ -22,7 +22,7 @@ public class DeleteProjectOfficialHandlerTest
         var request = new DeleteProjectOfficialCommandRequest { Id = 1 };
         var projectOfficial = new ProjectOfficial() { Id = 1,Mobile = "0955566898",Responsible = "dsdad",TelegramId = "@sdldsdas" };
 
-        _unitOfWorkSubstitute.ProjectOffcialRepo.GetById(1)
+        _unitOfWorkSubstitute.ProjectOffcialRepo.GetById(1)!
             .Returns(Task.FromResult(projectOfficial));
 
         // Act
@@ -44,8 +44,8 @@ public class DeleteProjectOfficialHandlerTest
         // Arrange
         var request = new DeleteProjectOfficialCommandRequest { Id = 1 };
 
-        _unitOfWorkSubstitute.ProjectOffcialRepo.GetById(1)
-            .Returns(Task.FromResult<ProjectOfficial>(null));
+        _unitOfWorkSubstitute.ProjectOffcialRepo.GetById(1)!
+            .Returns(Task.FromResult<ProjectOfficial>(null!));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);

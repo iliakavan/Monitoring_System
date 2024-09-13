@@ -27,9 +27,9 @@ public class UpdateServiceCommandHandlerTest
             Port = 80,
             Method = "GET"
         };
-#pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
-        _unitsOfWorks.ServiceRepo.GetById(1).Returns(Task.FromResult<Service>(null));
-#pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+
+        _unitsOfWorks.ServiceRepo.GetById(1)!.Returns(Task.FromResult<Service>(null!));
+
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);
@@ -62,7 +62,7 @@ public class UpdateServiceCommandHandlerTest
             ProjectId = 2
         };
 
-        _unitsOfWorks.ServiceRepo.GetById(1).Returns(Task.FromResult(service));
+        _unitsOfWorks.ServiceRepo.GetById(1)!.Returns(Task.FromResult(service));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);

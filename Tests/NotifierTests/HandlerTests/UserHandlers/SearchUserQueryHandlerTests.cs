@@ -24,7 +24,7 @@ public class SearchUserQueryHandlerTests
             // You can set up request parameters here as needed
         };
 
-        _mockUow.UserRepo.Search(Arg.Any<DateTime?>(), Arg.Any<DateTime?>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<Role?>(), Arg.Any<string?>())!
+        _mockUow.UserRepo.Search(Arg.Any<DateTime?>(), Arg.Any<DateTime?>(), Arg.Any<string?>(),Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<Role?>(), Arg.Any<string?>())!
             .Returns((IEnumerable<UserDto?>)null!);
 
         // Act
@@ -45,7 +45,7 @@ public class SearchUserQueryHandlerTests
             // You can set up request parameters here as needed
         };
 
-        _mockUow.UserRepo.Search(Arg.Any<DateTime?>(), Arg.Any<DateTime?>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<Role?>(), Arg.Any<string?>())
+        _mockUow.UserRepo.Search(Arg.Any<DateTime?>(), Arg.Any<DateTime?>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<Role?>(), Arg.Any<string?>())
             .Returns(Enumerable.Empty<UserDto>());
 
         // Act
@@ -72,7 +72,7 @@ public class SearchUserQueryHandlerTests
             // You can set up request parameters here as needed
         };
 
-        _mockUow.UserRepo.Search(Arg.Any<DateTime?>(), Arg.Any<DateTime?>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<Role?>(), Arg.Any<string?>())
+        _mockUow.UserRepo.Search(Arg.Any<DateTime?>(), Arg.Any<DateTime?>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<Role?>(), Arg.Any<string?>())
             .Returns(users);
 
         // Act

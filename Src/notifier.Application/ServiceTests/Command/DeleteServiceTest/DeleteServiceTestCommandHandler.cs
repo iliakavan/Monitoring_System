@@ -8,7 +8,7 @@ public class DeleteServiceTestCommandHandler(IUnitsOfWorks uow) : IRequestHandle
     private readonly IUnitsOfWorks _unitsOfWorks = uow;
     public async Task<ResultResponse> Handle(DeleteServiceTestCommandRequest request, CancellationToken cancellationToken)
     {
-        var ServiceTest = await _unitsOfWorks.ServiceTestRepo.GetById(request.Id);
+        var ServiceTest = await _unitsOfWorks.ServiceTestRepo.GetByIdincludeAll(request.Id);
         
         if(ServiceTest is null) 
         {

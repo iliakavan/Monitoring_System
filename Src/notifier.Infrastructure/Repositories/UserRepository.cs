@@ -16,7 +16,7 @@ public class UserRepository : IUserRepository
     {
         var user = await _context.Users.AsQueryable()
             .Where(u => u.UserName.ToLower() == usernameOrEmail ||
-                        u.Email.ToLower() == usernameOrEmail).FirstOrDefaultAsync();
+                        u.Email == usernameOrEmail).FirstOrDefaultAsync();
         
         if(BC.EnhancedVerify(text: password,hash: user?.Password))
         {
@@ -28,7 +28,11 @@ public class UserRepository : IUserRepository
     public void DeactiveUser(Users user)
     {
         user.IsActive = false;
-        Update(user);
+    }
+
+    public void Dispose()
+    {
+        _context.Dispose();
     }
 
     public async Task<IEnumerable<Users>> GetAll()
@@ -46,27 +50,23 @@ public class UserRepository : IUserRepository
         await _context.Users.AddAsync(user);
     }
 
-    public async Task<IEnumerable<UserDto>> Search(DateTime? startDate, DateTime? endDate, string? FullName, string? FirstName, string? LastName, string? Email, string? PhoneNumber, Role? role, string? UserName)
+    public async Task<IEnumerable<UserDto>> Search(DateTime? startDate, DateTime? endDate, string? FirstName, string? LastName, string? Email, string? PhoneNumber, Role? role, string? UserName)
     {
         DateTime start = startDate ?? DateTime.MinValue;
 
         DateTime end = endDate ?? DateTime.MaxValue;
 
-        var query = _context.Users.AsQueryable().Where(x => x.RecordDate >= start && x.RecordDate <= end);
-
-        if (!string.IsNullOrEmpty(FullName)) 
-        {
-            query = query.Where(x => x.FullName.Equals(FullName, StringComparison.CurrentCultureIgnoreCase));
-        }
+        var query = _context.Users.AsQueryable().Where(x => x.RecordDate.Date >= start && x.RecordDate.Date <= end);
 
         if(!string.IsNullOrEmpty(FirstName))
         {
-            query = query.Where(x => x.FirstName.Equals(FirstName, StringComparison.CurrentCultureIgnoreCase));
+            query = query.Where(x => x.FirstName.ToLower() == FirstName.ToLower());
+
         }
 
-        if(!string.IsNullOrEmpty(LastName)) 
+        if (!string.IsNullOrEmpty(LastName)) 
         {
-            query = query.Where(x => x.LastName.Equals(LastName, StringComparison.CurrentCultureIgnoreCase));
+            query = query.Where(x => x.LastName.ToLower() == LastName.ToLower());
         }
 
         if(!string.IsNullOrEmpty(Email)) 

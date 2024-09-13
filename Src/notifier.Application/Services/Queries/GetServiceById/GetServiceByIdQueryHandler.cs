@@ -22,7 +22,7 @@ public class GetServiceByIdQueryHandler(IUnitsOfWorks uow) : IRequestHandler<Get
             Title = service.Title,
             Url = service.Url,
             Ip = service.Ip,
-            Port = service.Port.Value,
+            Port = service.Port!.Value,
             Method = service.Method
         };
 

@@ -43,7 +43,7 @@ public class DeleteServiceNotificationCommandHandlerTest
         var request = new DeleteServiceNotificationCommandRequest { Id = 1 };
 
         // Mock the behavior of GetById to return null (notification not found)
-        _unitsOfWorks.NotificationRepo.GetById(request.Id).Returns((ServiceNotfications)null);
+        _unitsOfWorks.NotificationRepo.GetById(request.Id).Returns((ServiceNotfications)null!);
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);

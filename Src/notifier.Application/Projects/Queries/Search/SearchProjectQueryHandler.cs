@@ -5,10 +5,10 @@ namespace notifier.Application.Projects.Queries.Search;
 
 
 
-public class SearchProjectQueryHandler(IUnitsOfWorks uow) : IRequestHandler<SearchProjectQueryRequest, ResultResponse<IEnumerable<Project>>>
+public class SearchProjectQueryHandler(IUnitsOfWorks uow) : IRequestHandler<SearchProjectQueryRequest, ResultResponse<IEnumerable<Project?>>>
 {
     private readonly IUnitsOfWorks _unitsOfWorks = uow;
-    public async Task<ResultResponse<IEnumerable<Project>>> Handle(SearchProjectQueryRequest request, CancellationToken cancellationToken)
+    public async Task<ResultResponse<IEnumerable<Project?>>> Handle(SearchProjectQueryRequest request, CancellationToken cancellationToken)
     {
         DateTime? startdateEN = request.StartDate.ToGregorianDateTime();
         DateTime? enddateEn = request.EndDate.ToGregorianDateTime();

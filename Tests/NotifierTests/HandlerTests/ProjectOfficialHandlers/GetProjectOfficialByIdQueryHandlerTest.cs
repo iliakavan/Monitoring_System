@@ -48,7 +48,7 @@ public class GetProjectOfficialByIdQueryHandlerTest
     {
         // Arrange
         var request = new GetProjectOfficialByIdQueryRequest { Id = 1 };
-        _unitsOfWorks.ProjectOffcialRepo.GetById(1).Returns((ProjectOfficial)null);
+        _unitsOfWorks.ProjectOffcialRepo.GetById(1).Returns((ProjectOfficial)null!);
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);

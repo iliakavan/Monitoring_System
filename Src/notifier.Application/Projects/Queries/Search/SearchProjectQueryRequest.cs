@@ -1,7 +1,7 @@
 ﻿namespace notifier.Application.Projects.Queries.Search;
 
 
-public class SearchProjectQueryRequest : IRequest<ResultResponse<IEnumerable<Project>>>
+public class SearchProjectQueryRequest : IRequest<ResultResponse<IEnumerable<Project?>>>
 {
     public string? StartDate { get; set; }
 

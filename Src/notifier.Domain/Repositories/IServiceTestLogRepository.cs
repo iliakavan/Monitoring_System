@@ -1,7 +1,7 @@
 ﻿namespace notifier.Domain.Repositories;
 
 
-public interface IServiceTestLogRepository
+public interface IServiceTestLogRepository : IDisposable
 {
     Task Insert(ServiceTestLog log);
 
@@ -9,5 +9,5 @@ public interface IServiceTestLogRepository
 
     Task<IEnumerable<object>> Search(DateTime? StartDate, DateTime? EndDate, int? serviceId, string? ResponseCode, TestType? testtype,int? projectId,string? Ip,int? port,string? Url);
 
-
+    
 }

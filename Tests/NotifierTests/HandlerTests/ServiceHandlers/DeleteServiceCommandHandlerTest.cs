@@ -19,9 +19,8 @@ public class DeleteServiceCommandHandlerTest
     {
         // Arrange
         var request = new DeleteServiceCommandRequest { Id = 1 };
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-        _unitsOfWorks.ServiceRepo?.GetById(1).Returns(Task.FromResult<Service>(null));
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+
+        _unitsOfWorks.ServiceRepo?.GetByIdIncludeAll(1)!.Returns(Task.FromResult<Service>(null!));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);
@@ -29,7 +28,7 @@ public class DeleteServiceCommandHandlerTest
         // Assert
         result.Should().NotBeNull();
         result.Success.Should().BeFalse();
-        result.Message.Should().Be("Project doesn't exist.");
+        result.Message.Should().Be("Service doesn't exist.");
     }
 
     [Fact]
@@ -39,7 +38,7 @@ public class DeleteServiceCommandHandlerTest
         var service = new Service { Id = 1, Title = "Test Service",Url = "dskdskslkskakl",Ip = "123.123.123",Port = 123,Method = "Get" };
         var request = new DeleteServiceCommandRequest { Id = 1 };
 
-        _unitsOfWorks.ServiceRepo.GetById(1).Returns(Task.FromResult(service));
+        _unitsOfWorks.ServiceRepo.GetByIdIncludeAll(1)!.Returns(Task.FromResult(service));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);
@@ -50,7 +49,7 @@ public class DeleteServiceCommandHandlerTest
         result.Message.Should().Be("Test Service Deleted Successfully");
 
         // Verify that the service was deleted from the repository
-        _unitsOfWorks.ServiceRepo.Received(1).Delete(service);
+        _unitsOfWorks.ServiceRepo.Received(1)!.Delete(service);
 
         // Verify that SaveChanges was called
         await _unitsOfWorks.Received(1).SaveChanges();

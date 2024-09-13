@@ -2,10 +2,10 @@
 
 
 
-public interface IProjectRepository : IRepository<Project>
+public interface IProjectRepository : IRepository<Project>, IDisposable
 {
     Task<Project?> GetProjectByTitleAsync(string Title);
     Task<IEnumerable<Project?>> Search(DateTime? StartDate, DateTime? EndDate, string? Title);
-    Task<Project?> GetByIdIncludeAll(int id);
+    Task<Project?> GetbyIdIncludeAll(int id);
 
 }

@@ -19,7 +19,6 @@ public class ServiceNotificationRepository(AppDbcontext context) : IServiceNotif
     public void Delete(ServiceNotfications model)
     {
         model.IsActive = false;
-        Update(model);
     }
 
     public async Task<IEnumerable<ServiceNotfications>> GetAll()
@@ -67,7 +66,7 @@ public class ServiceNotificationRepository(AppDbcontext context) : IServiceNotif
             RecordDate = notife.RecordDate,
             RetryCount = notife.RetryCount,
             TestType = notife.ServiceTest.TestType.ToString()
-        }).AsNoTracking().ToListAsync();
+        }).ToListAsync();
     }
 
     public void Update(ServiceNotfications model)
@@ -80,6 +79,11 @@ public class ServiceNotificationRepository(AppDbcontext context) : IServiceNotif
                                             .Include(s => s.ServiceTest)
                                                         .ThenInclude(s => s.Service)
                                                                 .ThenInclude(s => s.Project)
-                                                                        .ThenInclude(s => s.ProjectOfficials).AsSplitQuery().ToListAsync();
+                                                                        .ThenInclude(s => s.ProjectOfficials).ToListAsync();
+    }
+
+    public void Dispose()
+    {
+        _context.Dispose();
     }
 }

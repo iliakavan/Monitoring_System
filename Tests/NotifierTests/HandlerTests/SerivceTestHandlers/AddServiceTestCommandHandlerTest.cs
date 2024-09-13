@@ -20,7 +20,7 @@ public class AddServiceTestCommandHandlerTest
     {
         // Arrange
         var request = new AddServiceTestCommandRequest { ServiceId = 1 };
-        _mockUnitOfWork.ServiceRepo.GetById(request.ServiceId).Returns(Task.FromResult<Service>(null));
+        _mockUnitOfWork.ServiceRepo.GetById(request.ServiceId)!.Returns(Task.FromResult<Service>(null!));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);
@@ -48,7 +48,7 @@ public class AddServiceTestCommandHandlerTest
             PriodTime = 30,
             TestType = notifier.Domain.Enum.TestType.Curl
         };
-        _mockUnitOfWork.ServiceRepo.GetById(request.ServiceId).Returns(Task.FromResult(service));
+        _mockUnitOfWork.ServiceRepo.GetById(request.ServiceId)!.Returns(Task.FromResult(service));
         var serviceTestRepo = _mockUnitOfWork.ServiceTestRepo;
 
         // Act

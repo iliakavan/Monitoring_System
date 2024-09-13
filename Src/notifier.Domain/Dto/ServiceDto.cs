@@ -18,6 +18,6 @@ public class ServiceDto
 
     public int ProjectId { get; set; }
 
-    public string? ProjectTitle { get; set; }
+    public string? ProjectName { get; set; }
 
 }

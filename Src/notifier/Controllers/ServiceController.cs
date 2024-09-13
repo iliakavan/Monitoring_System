@@ -1,4 +1,6 @@
-﻿namespace notifier.Controllers;
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace notifier.Controllers;
 
 
 
@@ -19,6 +21,7 @@ public class ServiceController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator;
 
     [HttpGet]
+    [Authorize(Roles = "Admin,Manager")]
 
     public async Task<IActionResult> GetServiceById([FromQuery] GetServiceByIdQueryRequest request) 
     {
@@ -34,6 +37,7 @@ public class ServiceController(IMediator mediator) : ControllerBase
 
     [HttpGet]
     [Route("List Of Services")]
+    [Authorize(Roles = "Admin,Manager")]
 
     public async Task<IActionResult> GetAllService() 
     {
@@ -49,6 +53,7 @@ public class ServiceController(IMediator mediator) : ControllerBase
 
     [HttpGet]
     [Route("Search")]
+    [Authorize(Roles = "User,Admin,Manager")]
     public async Task<IActionResult> SearchService([FromQuery] string? StartDate, [FromQuery] string? EndDate, [FromQuery] string? url,[FromQuery] string? title, [FromQuery] string? ip, [FromQuery] int? port, [FromQuery] int? projectid) 
     {
         var result = await _mediator.Send(new SearchServiceQueryRequest() { EndDate = EndDate,StartDate = StartDate, Title = title,Ip = ip,Port = port,Url = url, ProjectId = projectid });
@@ -61,6 +66,7 @@ public class ServiceController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin,Manager")]
 
     public async Task<IActionResult> AddService([FromBody] AddServiceCommandRequest request) 
     {
@@ -76,6 +82,7 @@ public class ServiceController(IMediator mediator) : ControllerBase
 
 
     [HttpPut]
+    [Authorize(Roles = "Admin,Manager")]
 
     public async Task<IActionResult> UpdateService([FromBody] UpdateServiceCommandRequest request) 
     {
@@ -89,6 +96,7 @@ public class ServiceController(IMediator mediator) : ControllerBase
     }
 
     [HttpDelete("{ID}")]
+    [Authorize(Roles = "Admin, Manager")]
 
 
     public async Task<IActionResult> DeleteService(int ID)

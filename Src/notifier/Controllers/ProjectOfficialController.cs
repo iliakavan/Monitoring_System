@@ -1,4 +1,6 @@
-﻿namespace notifier.Controllers;
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace notifier.Controllers;
 
 
 
@@ -10,6 +12,7 @@ public class ProjectOfficialController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator;
 
     [HttpGet]
+    [Authorize(Roles = "Admin,Manager")]
 
     public async Task<IActionResult> GetProjectOfficials() 
     {
@@ -25,6 +28,7 @@ public class ProjectOfficialController(IMediator mediator) : ControllerBase
 
     [HttpGet]
     [Route("ById")]
+    [Authorize(Roles = "Admin,Manager")]
 
     public async Task<IActionResult> GetProjectOfficialById([FromQuery] GetProjectOfficialByIdQueryRequest request)
     {
@@ -41,6 +45,7 @@ public class ProjectOfficialController(IMediator mediator) : ControllerBase
 
     [HttpGet]
     [Route("Search")]
+    [Authorize(Roles = "User,Admin,Manager")]
 
     public async Task<IActionResult> Search([FromQuery] string? StartDate, [FromQuery] string? EndDate, [FromQuery] string? Responsible, [FromQuery] string? Mobile, [FromQuery] string? TelegramId, [FromQuery] int? ProjectID) 
     {
@@ -54,6 +59,7 @@ public class ProjectOfficialController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin,Manager")]
 
     public async Task<IActionResult> AddProjectOfficial([FromBody] AddProjectOfficialCommandRequest request)
     {
@@ -67,6 +73,7 @@ public class ProjectOfficialController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Roles = "Admin,Manager")]
 
     public async Task<IActionResult> UpdateProjectOfficial([FromBody] UpdateProjectOfficialCommandRequest request) 
     {
@@ -80,6 +87,7 @@ public class ProjectOfficialController(IMediator mediator) : ControllerBase
     }
 
     [HttpDelete("{ID}")]
+    [Authorize(Roles = "Admin,Manager")]
 
     public async Task<IActionResult> DeleteProjectOfficial(int ID)
     {

@@ -19,7 +19,7 @@ public class UpdateProjectHandlerTest
     public async Task Handle_NullRequest_ShouldReturnFailureResult()
     {
         // Arrange
-        UpdateProjectCommandRequest request = null;
+        UpdateProjectCommandRequest request = null!;
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);
@@ -33,7 +33,7 @@ public class UpdateProjectHandlerTest
     {
         // Arrange
         var request = new UpdateProjectCommandRequest { Id = 1, Title = "New Title", Description = "New Description" };
-        _unitOfWorkSubstitute.ProjectRepo.GetById(1).Returns(Task.FromResult<Project>(null));
+        _unitOfWorkSubstitute.ProjectRepo.GetById(1)!.Returns(Task.FromResult<Project>(null!));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);
@@ -49,7 +49,7 @@ public class UpdateProjectHandlerTest
         // Arrange
         var project = new Project { Id = 1, Title = "Old Title", Description = "Old Description" };
         var request = new UpdateProjectCommandRequest { Id = 1, Title = "New Title", Description = "New Description" };
-        _unitOfWorkSubstitute.ProjectRepo.GetById(1).Returns(Task.FromResult(project));
+        _unitOfWorkSubstitute.ProjectRepo.GetById(1)!.Returns(Task.FromResult(project));
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);
@@ -65,7 +65,7 @@ public class UpdateProjectHandlerTest
         // Arrange
         var project = new Project { Id = 1, Title = "Old Title", Description = "Old Description" };
         var request = new UpdateProjectCommandRequest { Id = 1, Title = "New Title", Description = "New Description" };
-        _unitOfWorkSubstitute.ProjectRepo.GetById(1).Returns(Task.FromResult(project));
+        _unitOfWorkSubstitute.ProjectRepo.GetById(1)!.Returns(Task.FromResult(project));
 
         // Act
         await _handler.Handle(request, CancellationToken.None);

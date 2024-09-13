@@ -4,7 +4,7 @@
 
 
 
-public interface IProjectOffcialRepository : IRepository<ProjectOfficial>
+public interface IProjectOffcialRepository : IRepository<ProjectOfficial>, IDisposable
 {
     Task<IEnumerable<string>> FetchTelegramId(int projectId);
     Task<IEnumerable<ProjectOfficialDto>> Search(DateTime? StartDate, DateTime? EndDate,string? responsible,string? mobile,string? telegramID,int? projectid);
