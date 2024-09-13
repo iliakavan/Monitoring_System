@@ -21,8 +21,6 @@ public class ServiceRepository(AppDbcontext context) : IServiceRepository
 
     public void Delete(Service model)
     {
-        if (model == null) return;
-
         if(model.Tests is not null && model.Tests.Count > 0) 
         {
             foreach (var test in model.Tests) 
@@ -38,7 +36,6 @@ public class ServiceRepository(AppDbcontext context) : IServiceRepository
             }
         }
         model.IsActive = false;
-        Update(model);
     }
 
     public async Task<IEnumerable<Service>> GetAll()
@@ -51,12 +48,17 @@ public class ServiceRepository(AppDbcontext context) : IServiceRepository
         return await _context.Services.Where(S => S.Id == id).FirstOrDefaultAsync();
     }
 
+    public async Task<Service?> GetByIdIncludeAll(int id)
+    {
+        return await _context.Services.Where(S => S.Id == id).Include(S => S.Tests).ThenInclude(T => T.ServiceNotifications).FirstOrDefaultAsync();
+    }
+
     public async Task<IEnumerable<ServiceDto?>> Search(DateTime? StartDate, DateTime? EndDate,string? Title,string? url,string? Ip,int? Port,int? projectId)
     {
         DateTime start = StartDate ?? DateTime.MinValue;
         DateTime end = EndDate ?? DateTime.MaxValue;
 
-        var query = _context.Services.Include(S => S.Project).AsQueryable().Where(x => x.RecordDate >= start && x.RecordDate <= end);
+        var query = _context.Services.AsQueryable().Where(x => x.RecordDate.Date >= start && x.RecordDate.Date <= end);
         
 
         if (!string.IsNullOrEmpty(Title))

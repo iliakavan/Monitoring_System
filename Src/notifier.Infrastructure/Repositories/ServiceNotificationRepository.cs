@@ -36,7 +36,7 @@ public class ServiceNotificationRepository(AppDbcontext context) : IServiceNotif
     {
         DateTime start = StartDate ?? DateTime.MinValue;
         DateTime end = EndDate ?? DateTime.MaxValue;
-        var Query = _context.ServiceNotfications.Include(s => s.ServiceTest).ThenInclude(s => s.Service).ThenInclude(s => s.Project).AsQueryable().Where(x => x.RecordDate >= start && x.RecordDate <= end);
+        var Query = _context.ServiceNotfications.AsQueryable().Where(x => x.RecordDate.Date >= start && x.RecordDate.Date <= end);
         if(notifeType.HasValue)
         {
             Query = Query.Where(x => x.NotificationType == notifeType);
@@ -67,7 +67,7 @@ public class ServiceNotificationRepository(AppDbcontext context) : IServiceNotif
             RecordDate = notife.RecordDate,
             RetryCount = notife.RetryCount,
             TestType = notife.ServiceTest.TestType.ToString()
-        }).ToListAsync();
+        }).AsNoTracking().ToListAsync();
     }
 
     public void Update(ServiceNotfications model)
@@ -80,6 +80,6 @@ public class ServiceNotificationRepository(AppDbcontext context) : IServiceNotif
                                             .Include(s => s.ServiceTest)
                                                         .ThenInclude(s => s.Service)
                                                                 .ThenInclude(s => s.Project)
-                                                                        .ThenInclude(s => s.ProjectOfficials).ToListAsync();
+                                                                        .ThenInclude(s => s.ProjectOfficials).AsSplitQuery().ToListAsync();
     }
 }

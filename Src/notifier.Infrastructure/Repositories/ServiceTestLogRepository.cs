@@ -35,7 +35,6 @@ public class ServiceTestLogRepository(AppDbcontext context) : IServiceTestLogRep
         var query = _context.ServiceTestsLogs
                             .IgnoreQueryFilters()
                             .Where(x => x.RecordDate.Date >= Start && x.RecordDate.Date <= End);
-
         if (!string.IsNullOrEmpty(ResponseCode))
         {
             query = query.Where(x => x.ResponseCode == ResponseCode);
@@ -71,9 +70,7 @@ public class ServiceTestLogRepository(AppDbcontext context) : IServiceTestLogRep
             query = query.Where(x => x.Service.Tests.Any(t => t.TestType == testtype));
         }
 
-        var result = await query.Include(x => x.Service)
-                                .ThenInclude(s => s.Tests)
-                                .Select(x => new
+        var result = await query.Select(x => new
                                 {
                                     ProjectName = x.Service.Project.Title, // Assuming Project has a Title property
                                     RecordDate = x.RecordDate,
@@ -82,9 +79,7 @@ public class ServiceTestLogRepository(AppDbcontext context) : IServiceTestLogRep
                                     Url = x.Service.Url,
                                     Ip = x.Service.Ip,
                                     Port = x.Service.Port
-                                })
-                                .ToListAsync();
-
+                                }).ToListAsync();
         return result;
     }
 }

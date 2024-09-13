@@ -44,7 +44,7 @@ public class ServiceNotificationController(IMediator mediator) : ControllerBase
 
     public async Task<IActionResult> Search([FromQuery] string? StartDate, [FromQuery] string? EndDate, [FromQuery] NotificationType? notifieType, [FromQuery] int? servicetestid, [FromQuery] int? serviceId,int? projectId)
     {
-        var result = await _mediator.Send(new SearchServiceNotificationQueryRequest(StartDate, EndDate,notifieType,serviceId,servicetestid,projectId));
+        var result = await _mediator.Send(new SearchServiceNotificationQueryRequest(StartDate, EndDate,notifieType, servicetestid,serviceId, projectId));
 
         if (!result.Success)
         {

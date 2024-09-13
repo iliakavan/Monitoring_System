@@ -14,8 +14,6 @@ public class ProjectRepository(AppDbcontext context) : IProjectRepository
 
     public void Delete(Project model)
     {
-        if (model == null) return;
-
         if (model.Services != null && model.Services.Count > 0)
         {
             foreach (var service in model.Services)
@@ -33,14 +31,12 @@ public class ProjectRepository(AppDbcontext context) : IProjectRepository
                             }
                         }
                         test.IsActive = false;
-
                     }
                 }
                 service.IsActive = false;
             }
         }
         model.IsActive = false;
-        Update(model);
     }
 
     public async Task<IEnumerable<Project>> GetAll()

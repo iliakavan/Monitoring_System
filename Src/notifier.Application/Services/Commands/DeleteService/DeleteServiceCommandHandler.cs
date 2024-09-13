@@ -7,7 +7,7 @@ public class DeleteServiceCommandHandler(IUnitsOfWorks uow) : IRequestHandler<De
     private readonly IUnitsOfWorks _unitsOfWorks = uow;
     public async Task<ResultResponse> Handle(DeleteServiceCommandRequest request, CancellationToken cancellationToken)
     {
-        var service = await _unitsOfWorks.ServiceRepo.GetById(request.Id);
+        var service = await _unitsOfWorks.ServiceRepo.GetByIdIncludeAll(request.Id);
         
         if (service is null)
         {
