@@ -21,7 +21,7 @@ public class ServiceController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator;
 
     [HttpGet]
-    [Authorize(Roles = "Admin,Manager")]
+    [Authorize(Roles = "User,Admin,Manager")]
 
     public async Task<IActionResult> GetServiceById([FromQuery] GetServiceByIdQueryRequest request) 
     {

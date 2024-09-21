@@ -12,4 +12,6 @@ public interface IServiceNotificationRepository : IRepository<ServiceNotfication
 {
     Task<IEnumerable<ServiceNotificationDto?>> Search(DateTime? StartDate, DateTime? EndDate, NotificationType? notifeType, int? ServiceTestId, int? ServiceId, int? ProjectId);
     Task<List<ServiceNotfications>> GetAllServices();
+    Task<int> GetMaxRetryCount(int serviceNotifID);
+
 }

@@ -13,4 +13,6 @@ public class ServiceTest : BaseEntity
     public Service Service { get; set; } = null!;
 
     public ICollection<ServiceNotfications> ServiceNotifications { get; } = new List<ServiceNotfications>();
+    public LastStatus LastStatus { get; set; } = LastStatus.Success;
+
 }

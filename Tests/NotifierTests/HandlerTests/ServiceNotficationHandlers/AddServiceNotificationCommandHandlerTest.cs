@@ -22,7 +22,7 @@ public class AddServiceNotificationCommandHandlerTest
         {
             MessageFormat = "Test message",
             MessageSuccess = "test",
-            RetryCount = 3,
+            MaxRetryCount = 3,
             NotificationType = notifier.Domain.Enum.NotificationType.Telegram,
             ServiceTestId = 1
         };
@@ -37,7 +37,7 @@ public class AddServiceNotificationCommandHandlerTest
         // Verify that Add was called on the NotificationRepo with the correct parameters
         await _unitsOfWorks.NotificationRepo.Received(1).Add(Arg.Is<ServiceNotfications>(sn =>
             sn.MessageFormat == request.MessageFormat &&
-            sn.RetryCount == request.RetryCount &&
+            sn.MaxRetryCount == request.MaxRetryCount &&
             sn.NotificationType == request.NotificationType &&
             sn.ServiceTestId == request.ServiceTestId &&
             sn.RecordDate.Date == DateTime.Now.Date // Check only the date part to avoid time comparison issues
@@ -55,7 +55,7 @@ public class AddServiceNotificationCommandHandlerTest
         {
             MessageFormat = "Test message",
             MessageSuccess = "test",
-            RetryCount = 3,
+            MaxRetryCount = 3,
             NotificationType = notifier.Domain.Enum.NotificationType.Telegram,
             ServiceTestId = 1
         };

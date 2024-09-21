@@ -13,6 +13,7 @@ services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
     options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -52,14 +53,14 @@ services.AddHttpClient();
 services.AddSingleton<IHangfireMethods, HangfireMethods>();
 
 services.AddHangfire(configuration => configuration
-    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseDynamicJobs()
     .UseSimpleAssemblyNameTypeSerializer()
     .UseRecommendedSerializerSettings()
     .UseSqlServerStorage(builder.Configuration.GetConnectionString("Default"), new SqlServerStorageOptions
     {
         SchemaName = "hangfire_notifier"
     }));
-
 // Add the processing server as IHostedService
 services.AddHangfireServer();
 
@@ -83,6 +84,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.UseMiddleware<GlobalExceptionHandler>();
+
 
 var hangfires = app.Services.GetService<IHangfireMethods>();
 hangfires?.Run();

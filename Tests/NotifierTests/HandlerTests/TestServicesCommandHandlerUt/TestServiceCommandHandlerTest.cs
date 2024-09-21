@@ -1,4 +1,5 @@
-﻿using notifier.Application.BackgroundService;
+﻿using MediatR;
+using notifier.Application.BackgroundService;
 using notifier.Application.ServiceTests.Command.TestServices;
 using notifier.Application.Utils;
 using notifier.Domain.Enum;
@@ -9,201 +10,328 @@ namespace NotifierTests.HandlerTests.TestServicesCommandHandlerUt;
 
 public class TestServicesCommandHandlerTest
 {
-    private readonly IUnitsOfWorks _uowMock;
-    private readonly ISendRequestHelper _reqHelperMock;
-    private readonly ITelegramService _telServiceMock;
+    private readonly IUnitsOfWorks _uow;
+    private readonly ISendRequestHelper _reqHelper;
+    private readonly ITelegramService _telService;
     private readonly TestServicesCommandHandler _handler;
 
     public TestServicesCommandHandlerTest()
     {
-        _uowMock = Substitute.For<IUnitsOfWorks>();
-        _reqHelperMock = Substitute.For<ISendRequestHelper>();
-        _telServiceMock = Substitute.For<ITelegramService>();
-        _handler = new TestServicesCommandHandler(_uowMock, _reqHelperMock, _telServiceMock);
+        _uow = Substitute.For<IUnitsOfWorks>();
+        _reqHelper = Substitute.For<ISendRequestHelper>();
+        _telService = Substitute.For<ITelegramService>();
+        _handler = new TestServicesCommandHandler(_uow, _reqHelper, _telService);
     }
 
     [Fact]
-    public async Task Handle_ShouldReturnSuccess_WhenAllServicesPass()
+    public async Task Handle_Should_Send_PingRequest_And_Notification_On_Failure()
     {
         // Arrange
-        var serviceTests = new List<ServiceNotfications>
+        var serviceTests = new List<ServiceNotfications>()
         {
             new ServiceNotfications
             {
-                ServiceTest = new ServiceTest { TestType = TestType.Ping, Service = new Service { Method = "Get",Title = "Test Service 1", Url = "https://www.example.com"} },
-                NotificationType = NotificationType.Telegram,
-                MessageSuccess = "Ping successful",
-                MessageFormat = "Ping failed"
-            },
-            new ServiceNotfications
-            {
-                ServiceTest = new ServiceTest { TestType = TestType.Ping, Service = new Service { Method = "Get",Title = "Test Service 1", Url = "https://www.example.com"} },
-                NotificationType = NotificationType.Telegram,
-                MessageSuccess = "TelNet successful",
-                MessageFormat = "Telnet failed"
-            },
-            new ServiceNotfications
-            {
-                ServiceTest = new ServiceTest { TestType = TestType.Ping, Service = new Service { Method = "Get",Title = "Test Service 1", Url = "https://www.example.com"} },
-                NotificationType = NotificationType.Telegram,
-                MessageSuccess = "Http successful",
-                MessageFormat = "Http failed"
-            },
-        };
-
-        _uowMock.NotificationRepo.GetAllServices().Returns(await Task.FromResult(serviceTests));
-
-        // Mocking Ping response
-        _reqHelperMock.PingRequestAsync(Arg.Any<string>())
-            .Returns(await Task.FromResult(new ResultResponse<PingDto> { Success = true, Value = new PingDto { SuccessPercent = 100 } }));
-
-        // Mocking ConnectToServer response
-        _reqHelperMock.ConnectToServerAsync(Arg.Any<string>(), Arg.Any<int>())
-            .Returns(await Task.FromResult(new ResultResponse { Success = true }));
-
-        // Mocking MakeHttpRequestAsync response
-        _reqHelperMock.MakeHttpRequestAsync(Arg.Any<string>())
-            .Returns(await Task.FromResult(new ResultResponse { Success = true }));
-
-        // Mocking Telegram service
-        _telServiceMock.SendMessage(Arg.Any<string>(), Arg.Any<string>())
-            .Returns(Task.CompletedTask);
-
-        // Act
-        var result = await _handler.Handle(new TestServicesCommand(), CancellationToken.None);
-
-        // Assert
-        result.Should().NotBeNull();
-        result.Success.Should().BeTrue();
-
-        _uowMock.NotificationRepo.Received().Update(Arg.Any<ServiceNotfications>());
-        await _uowMock.SaveChanges();
-    }
-
-    [Fact]
-    public async Task Handle_ShouldRetryAndLog_WhenServiceFails()
-    {
-        // Arrange
-        var serviceTests = new List<ServiceNotfications>
-        {
-            new ServiceNotfications
-            {
+                Id = 1,
+                RetryCount = 0,
+                ErrorRetryCount = 0,
                 ServiceTest = new ServiceTest
                 {
                     TestType = TestType.Ping,
                     Service = new Service
                     {
-                        Ip = "127.0.0.1",
-                        Port = 80,
-                        Title = "Test Service 1",
-                        Method = "GET" // Ensure all used properties are set
-                    }
+                        Title = "Ping Test Service",
+                        Ip = "127.0.0.1"
+                    },
+                    LastStatus = LastStatus.Success
                 },
-                NotificationType = NotificationType.Telegram,
-                MessageFormat = "Ping failed",
-                MessageSuccess = "Ping Success",
-                RetryCount = 0
+                MessageFormat = "ghjkl;",
+                MessageSuccess = "cvbnm,."
+                
             }
         };
-        PingDto ping = new()
-        { 
-            SuccessPercent = 10,
-            BufferSize = string.Empty,
-            Address = "127.0.0.1",
-            DontFragment = string.Empty,
-            RoundTriptime = string.Empty,
-            Ttl = string.Empty
+
+        var pingResult = new ResultResponse<PingDto>
+        {
+            Success = false,
+            Message = "Ping failed",
+            Value = new PingDto { SuccessPercent = 50, RoundTriptime = 100.ToString() }
         };
 
-        // Ensure the Unit of Work mock returns the test data
-        _uowMock.NotificationRepo.GetAllServices().Returns(Task.FromResult(serviceTests));
+        var telegramUsers = new List<string> { "user1", "user2" };
 
-        // Simulate a failed Ping response
-        _reqHelperMock.PingRequestAsync(Arg.Any<string>())
-            .Returns(Task.FromResult(new ResultResponse<PingDto> { Success = false, Value = ping }));
-
-        // Mock Telegram IDs
-        _uowMock.ProjectOffcialRepo.FetchTelegramId(Arg.Any<int>())
-            .Returns(await Task.FromResult(new List<string> { "123456789" }));
-
-        // Mocking Telegram service - ensure this does not return null
-        _telServiceMock.SendMessage(Arg.Any<string>(), Arg.Any<string>())
-            .Returns(Task.CompletedTask);
+        _uow.NotificationRepo.GetAllServices().Returns(Task.FromResult((List<ServiceNotfications>)serviceTests));
+        _uow.NotificationRepo.GetMaxRetryCount(1).Returns(Task.FromResult(3));
+        _reqHelper.PingRequestAsync(Arg.Any<string>()).Returns(Task.FromResult(pingResult));
+        _uow.ProjectOffcialRepo.FetchTelegramId(Arg.Any<int>()).Returns(await Task.FromResult(telegramUsers));
 
         // Act
         var result = await _handler.Handle(new TestServicesCommand(), CancellationToken.None);
 
         // Assert
-        result.Should().NotBeNull();
         result.Success.Should().BeTrue();
-
-        // Ensure retry count is incremented and logs are written
-        var serviceNotification = serviceTests.First();
-        serviceNotification.RetryCount.Should().Be(1);
-
-        // Verify that the log was inserted and the notification was updated
-        await _uowMock.ServiceTestLogRepo.Received(1).Insert(Arg.Any<ServiceTestLog>());
-        _uowMock.NotificationRepo.Received(1).Update(serviceNotification);
-
-        // Verify that the SendMessage method was called
-        await _telServiceMock.Received(1).SendMessage(Arg.Any<string>(), Arg.Any<string>());
-
+        _telService.Received(telegramUsers.Count)?.SendMessage(Arg.Any<string>(), Arg.Any<string>());
+        _uow.NotificationRepo.Received().Update(Arg.Any<ServiceNotfications>());
     }
 
     [Fact]
-    public async Task Handle_ShouldSendTelegramNotification_WhenTestFails()
+    public async Task Handle_Should_Not_Send_Notification_If_Service_Is_Successful()
     {
-
         // Arrange
-        var serviceTests = new List<ServiceNotfications>
+        var serviceTests = new List<ServiceNotfications>()
         {
-        new ServiceNotfications
-        {
-            ServiceTest = new ServiceTest
+            new ServiceNotfications
             {
-                TestType = TestType.Ping,
-                Service = new Service
+                Id = 1,
+                RetryCount = 0,
+                ErrorRetryCount = 0,
+                ServiceTest = new ServiceTest
                 {
-                    Method = "Get",
-                    Title = "Test Service 1",
-                    Url = "https://www.example.com"
-                }
-            },
-            NotificationType = NotificationType.Telegram,
-            MessageSuccess = "Ping successful",
-            MessageFormat = "Ping failed"
-        }
+                    TestType = TestType.Ping,
+                    Service = new Service
+                    {
+                        Title = "Ping Test Service",
+                        Ip = "127.0.0.1"
+                    },
+                    LastStatus = LastStatus.Error
+                },
+                MessageFormat = "ghjkl;",
+                MessageSuccess = "cvbnm,."
+            }
         };
 
-        // Mock ping response to simulate failure
-        PingDto ping = new()
+        var pingResult = new ResultResponse<PingDto>
         {
-            SuccessPercent = 10, // Simulate low success rate to trigger failure
-            BufferSize = string.Empty,
-            Address = "127.0.0.1",
-            DontFragment = string.Empty,
-            RoundTriptime = string.Empty,
-            Ttl = string.Empty
+            Success = true,
+            Message = "Ping succeeded",
+            Value = new PingDto { SuccessPercent = 100, RoundTriptime = 50.ToString() }
         };
 
-        _uowMock.NotificationRepo.GetAllServices().Returns(Task.FromResult(serviceTests));
+        _uow.NotificationRepo.GetAllServices().Returns(Task.FromResult((List<ServiceNotfications>)serviceTests));
+        _uow.NotificationRepo.GetMaxRetryCount(1).Returns(Task.FromResult(3));
+        _reqHelper.PingRequestAsync(Arg.Any<string>()).Returns(Task.FromResult(pingResult));
 
-        // Mocking failed Ping request response
-        _reqHelperMock.PingRequestAsync(Arg.Any<string>())
-            .Returns(Task.FromResult(new ResultResponse<PingDto>
+        // Act
+        var result = await _handler.Handle(new TestServicesCommand(), CancellationToken.None);
+
+        // Assert
+        result.Success.Should().BeTrue();
+        _telService.DidNotReceive()?.SendMessage(Arg.Any<string>(), Arg.Any<string>());
+    }
+
+    [Fact]
+    public async Task Handle_Should_Send_TelNetRequest_And_Notification_On_Failure()
+    {
+        // Arrange
+        var serviceTests = new List<ServiceNotfications>()
+        {
+            new ServiceNotfications
             {
-                Success = false,
-                Message = "Ping failed",
-                Value = ping
-            }));
+                Id = 1,
+                RetryCount = 0,
+                ErrorRetryCount = 0,
+                ServiceTest = new ServiceTest
+                {
+                    TestType = TestType.TelNet,
+                    Service = new Service
+                    {
+                        Title = "TelNet Service",
+                        Ip = "192.168.1.1",  // Ensure this is not null
+                        Port = 8080          // Ensure this is not null
+                    },
+                    LastStatus = LastStatus.Success,
+                },
+                MessageFormat = "TelNet Test failed",
+                MessageSuccess = "OK"
+            }
+        };
 
-        // Mock Telegram IDs
-        _uowMock.ProjectOffcialRepo.FetchTelegramId(Arg.Any<int>())
-            .Returns(await Task.FromResult(new List<string> { "123456789" }));
+        // Check for null values in the objects
+        serviceTests.Should().NotBeNull();
+        serviceTests[0].ServiceTest.Should().NotBeNull();
+        serviceTests[0].ServiceTest.Service.Should().NotBeNull();
+        serviceTests[0].ServiceTest.Service.Ip.Should().NotBeNull();
+        serviceTests[0].ServiceTest.Service.Port.Should().NotBeNull();
 
-        // Mocking the SendMessage to ensure it will be called
-        _telServiceMock.SendMessage(Arg.Any<string>(), Arg.Any<string>())
-            .Returns(Task.CompletedTask);
+        var telNetResult = new ResultResponse
+        {
+            Success = false,
+            Message = "TelNet connection failed"
+        };
+
+        var telegramUsers = new List<string> { "user1", "user2" };
+
+        // Mock the dependencies
+        _uow.NotificationRepo.GetAllServices().Returns(Task.FromResult((List<ServiceNotfications>)serviceTests));
+        _uow.NotificationRepo.GetMaxRetryCount(1).Returns(Task.FromResult(3));
+        _reqHelper.ConnectToServerAsync(Arg.Any<string>(), Arg.Any<int>()).Returns(Task.FromResult(telNetResult));
+        _uow.ProjectOffcialRepo.FetchTelegramId(Arg.Any<int>()).Returns(await Task.FromResult(telegramUsers));
+
+        // Act
+        var result = await _handler.Handle(new TestServicesCommand(), CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Success.Should().BeTrue();  // Verify the result
+        _telService.Received(telegramUsers.Count)?.SendMessage(Arg.Any<string>(), Arg.Any<string>());
+        _uow.NotificationRepo.Received().Update(Arg.Any<ServiceNotfications>());
+    }
+
+    [Fact]
+    public async Task Handle_Should_Send_CurlRequest_And_Notification_On_Failure()
+    {
+        // Arrange
+        var serviceTests = new List<ServiceNotfications>()
+        {
+            new ServiceNotfications
+            {
+                Id = 1,
+                RetryCount = 0,
+                ErrorRetryCount = 0,
+                ServiceTest = new ServiceTest
+                {
+                    TestType = TestType.Curl,
+                    Service = new Service
+                    {
+                        Title = "HTTP Service",
+                        Url = "https://example.com" // Ensure this is not null
+                    },
+                    LastStatus = LastStatus.Success,
+                },
+                MessageFormat = "Test failed",
+                MessageSuccess = "ERTYUIOP"
+
+            }
+        };
+
+        // Adding assertions to check for nulls
+        serviceTests.Should().NotBeNull();
+        serviceTests[0].ServiceTest.Should().NotBeNull();
+        serviceTests[0].ServiceTest.Service.Should().NotBeNull();
+        serviceTests[0].ServiceTest.Service.Url.Should().NotBeNull();
+
+        var curlResult = new ResultResponse
+        {
+            Success = false,
+            Message = "HTTP request failed"
+        };
+
+        var telegramUsers = new List<string> { "user1", "user2" };
+
+        // Mocking dependencies
+        _uow.NotificationRepo.GetAllServices().Returns(Task.FromResult((List<ServiceNotfications>)serviceTests));
+        _uow.NotificationRepo.GetMaxRetryCount(1).Returns(Task.FromResult(3));
+        _reqHelper.MakeHttpRequestAsync(Arg.Any<string>()).Returns(Task.FromResult(curlResult));
+        _uow.ProjectOffcialRepo.FetchTelegramId(Arg.Any<int>()).Returns(await Task.FromResult(telegramUsers));
+
+        // Act
+        var result = await _handler.Handle(new TestServicesCommand(), CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull(); // Ensure result is not null
+        result.Success.Should().BeTrue();
+        _telService.Received(telegramUsers.Count)?.SendMessage(Arg.Any<string>(), Arg.Any<string>());
+        _uow.NotificationRepo.Received().Update(Arg.Any<ServiceNotfications>());
+    }
+
+    [Fact]
+    public async Task Handle_Should_Send_Final_Notification_When_Max_Retries_Are_Reached()
+    {
+        // Arrange
+        var serviceTests = new List<ServiceNotfications>()
+        {
+            new ServiceNotfications
+            {
+                Id = 1,
+                RetryCount = 2, // One less than max retries
+                ErrorRetryCount = 2,
+                ServiceTest = new ServiceTest
+                {
+                    TestType = TestType.Ping,
+                    Service = new Service
+                    {
+                        Title = "Ping Test Service",
+                        Ip = "127.0.0.1"
+                    },
+                    LastStatus = LastStatus.Error,
+                },
+                    MessageFormat = "Service failed",
+                    MessageSuccess = "Ok"
+            }
+        };
+
+        var pingResult = new ResultResponse<PingDto>
+        {
+            Success = false,
+            Message = "Ping failed",
+            Value = new PingDto { SuccessPercent = 50, RoundTriptime = 100.ToString() }
+        };
+
+        var telegramUsers = new List<string> { "user1", "user2" };
+
+        _uow.NotificationRepo.GetAllServices().Returns(Task.FromResult((List<ServiceNotfications>)serviceTests));
+        _uow.NotificationRepo.GetMaxRetryCount(1).Returns(Task.FromResult(3)); // Max retries set to 3
+        _reqHelper.PingRequestAsync(Arg.Any<string>()).Returns(Task.FromResult(pingResult));
+        _uow.ProjectOffcialRepo.FetchTelegramId(Arg.Any<int>()).Returns(await Task.FromResult(telegramUsers));
+
+        // Act
+        var result = await _handler.Handle(new TestServicesCommand(), CancellationToken.None);
+
+        // Assert
+        result.Success.Should().BeTrue();
+        _telService.Received(telegramUsers.Count)?.SendMessage(Arg.Any<string>(), Arg.Any<string>());
+        _uow.NotificationRepo.Received().Update(Arg.Any<ServiceNotfications>());
+        serviceTests[0].RetryCount.Should().Be(0); // Retry count should be reset after max attempts
+    }
+
+    [Fact]
+    public async Task Handle_Should_Send_Success_Notification_After_Previous_Failure()
+    {
+        // Arrange
+        var serviceTests = new List<ServiceNotfications>()
+        {
+            new ServiceNotfications
+            {
+                Id = 1,
+                RetryCount = 0,
+                ErrorRetryCount = 1,
+                ServiceTest = new ServiceTest
+                {
+                    TestType = TestType.Ping,
+                    Service = new Service
+                    {
+                        Title = "Ping Test Service",
+                        Ip = "127.0.0.1"
+                    },
+                    LastStatus = LastStatus.Success,
+                },
+                MessageFormat = "Service was down",
+                MessageSuccess = "ok"
+            }
+        };
+
+        var pingResultFailure = new ResultResponse<PingDto>
+        {
+            Success = false,
+            Message = "Ping request failed"
+        };
+
+        var pingResultSuccess = new ResultResponse<PingDto>
+        {
+            Success = true,
+            Message = "Ping request succeeded",
+            Value = new PingDto { RoundTriptime = 10.ToString(), SuccessPercent = 100 }
+        };
+
+        var telegramUsers = new List<string> { "user1", "user2" };
+
+        // Mock the necessary repository and helper responses
+        _uow.NotificationRepo.GetAllServices().Returns(Task.FromResult((List<ServiceNotfications>)serviceTests));
+        _uow.NotificationRepo.GetMaxRetryCount(1).Returns(Task.FromResult(3));
+
+        // First return a failure result, then return a success result in the same test
+        _reqHelper.PingRequestAsync(Arg.Any<string>()).Returns(Task.FromResult(pingResultSuccess)); // Simulating success after previous failure
+
+        _uow.ProjectOffcialRepo.FetchTelegramId(Arg.Any<int>()).Returns(await Task.FromResult(telegramUsers));
 
         // Act
         var result = await _handler.Handle(new TestServicesCommand(), CancellationToken.None);
@@ -212,7 +340,14 @@ public class TestServicesCommandHandlerTest
         result.Should().NotBeNull();
         result.Success.Should().BeTrue();
 
-        // Verify that the Telegram message was sent
-        await _telServiceMock.Received(1).SendMessage("123456789", Arg.Any<string>());
+        // Expect exactly 2 calls for notifications (one for each user)
+        _telService.Received(telegramUsers.Count)?.SendMessage(Arg.Any<string>(), Arg.Any<string>());
     }
+
+
+
+
+
+
+
 }

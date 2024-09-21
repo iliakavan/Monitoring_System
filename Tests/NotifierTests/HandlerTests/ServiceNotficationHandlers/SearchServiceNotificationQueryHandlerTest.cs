@@ -14,6 +14,7 @@ public class SearchServiceNotificationQueryHandlerTest
 
     public SearchServiceNotificationQueryHandlerTest()
     {
+
         _unitsOfWorksSubstitute = Substitute.For<IUnitsOfWorks>();
         _handler = new SearchServiceNotificationQueryHandler(_unitsOfWorksSubstitute);
     }

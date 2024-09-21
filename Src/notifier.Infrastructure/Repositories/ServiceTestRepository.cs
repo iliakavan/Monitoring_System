@@ -47,9 +47,14 @@ public class ServiceTestRepository(AppDbcontext context) : IServiceTestRepositor
         return await _context.ServiceTests.Where(St => St.Id == ID).Include(Sn => Sn.ServiceNotifications).FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<int>> GetPeriodTime()
+ 
+    public async Task<IEnumerable<ServiceTestID_PeriodDto>> GetPeriodTime()
     {
-        return await _context.ServiceTests.AsQueryable().Select(x => x.PriodTime).ToListAsync();
+        return await _context.ServiceTests.AsQueryable().Select(x => new ServiceTestID_PeriodDto()
+                                                                {
+                                                                    ID = x.Id,
+                                                                    PeriodTime = x.PriodTime
+                                                                }).ToListAsync();
     }
 
     public async Task<IEnumerable<ServiceTestDto>> Search(DateTime? StartDate, DateTime? EndDate,int? ServiceId,int? ProjectId)

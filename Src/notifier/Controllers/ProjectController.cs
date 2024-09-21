@@ -14,7 +14,7 @@ public class ProjectController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator;
 
     [HttpGet("{Id}")]
-    [Authorize(Roles = "Admin,Manager")]
+    [Authorize(Roles = "User,Admin,Manager")]
 
     public async Task<IActionResult> GetProjectById(int Id) 
     {

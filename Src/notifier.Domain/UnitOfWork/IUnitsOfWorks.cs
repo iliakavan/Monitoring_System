@@ -15,7 +15,12 @@ public interface IUnitsOfWorks : IDisposable
     IServiceRepository ServiceRepo { get; }
 
     IServiceTestRepository ServiceTestRepo { get; }
+
     IServiceTestLogRepository ServiceTestLogRepo { get; }
+
+    ITelegramMassageLogRepository TelegramMassageLogRepo { get; }
+
+    IErrorLogRepository ErrorLogRepo { get; }
 
     IUserRepository UserRepo { get; }
 

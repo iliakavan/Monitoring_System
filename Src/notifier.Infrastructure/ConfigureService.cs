@@ -26,6 +26,8 @@ public static class ConfigureService
         services.AddScoped<IServiceTestLogRepository, ServiceTestLogRepository>();
         services.AddScoped<ITelegramService, TelegramService>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ITelegramMassageLogRepository, TelegramMassageLogRepository>();
+        services.AddScoped<IErrorLogRepository, ErrorLogRepository>();
         services.AddScoped<IUnitsOfWorks,UnitOfWork>();
 
         return services;  

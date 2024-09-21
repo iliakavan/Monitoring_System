@@ -13,7 +13,7 @@ public class ServiceNotificationController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator;
 
     [HttpGet]
-    [Authorize(Roles = "Admin, Manager")]
+    [Authorize(Roles = "User,Admin, Manager")]
 
     public async Task<IActionResult> GetServiceNotification([FromQuery] GetServiceNotificationByIdQueryRequest request) 
     {

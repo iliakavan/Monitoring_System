@@ -13,6 +13,7 @@ public class ServiceTestLogController(IMediator mediator) : ControllerBase
     
 
     [HttpGet]
+    [Authorize(Roles = "User,Admin, Manager")]
 
     public async Task<IActionResult> Search([FromQuery] string? Start, [FromQuery] string? End, [FromQuery] int? serviceId ) 
     {

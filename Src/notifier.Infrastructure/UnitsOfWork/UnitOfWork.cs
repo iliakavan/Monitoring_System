@@ -12,7 +12,9 @@ public class UnitOfWork
         IServiceRepository serviceRepository,
         IServiceTestRepository serviceTestRepository,
         IServiceTestLogRepository serviceTestLogRepository,
-        IUserRepository userRepository
+        ITelegramMassageLogRepository telegramMassageLogRepository,
+        IUserRepository userRepository,
+        IErrorLogRepository errorLogRepository
         
     ) : IUnitsOfWorks
 {
@@ -23,6 +25,8 @@ public class UnitOfWork
     private readonly IServiceTestRepository serviceTestRepo = serviceTestRepository;
     private readonly IServiceTestLogRepository serviceTestLogRepo = serviceTestLogRepository;
     private readonly IUserRepository _userRepository = userRepository;
+    private readonly IErrorLogRepository _errorLogRepository = errorLogRepository;
+    private readonly ITelegramMassageLogRepository _telegramMassageLogRepository = telegramMassageLogRepository;
     private readonly AppDbcontext _context = context;
 
 
@@ -38,7 +42,11 @@ public class UnitOfWork
 
     public IServiceTestLogRepository ServiceTestLogRepo => serviceTestLogRepo;
 
+    public ITelegramMassageLogRepository TelegramMassageLogRepo => _telegramMassageLogRepository;
+
     public IUserRepository UserRepo => _userRepository;
+
+    public IErrorLogRepository ErrorLogRepo => _errorLogRepository;
 
     public void Dispose()
     {

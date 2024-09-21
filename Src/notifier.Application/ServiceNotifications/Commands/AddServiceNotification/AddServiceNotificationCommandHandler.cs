@@ -12,7 +12,7 @@ public class AddServiceNotificationCommandHandler(IUnitsOfWorks uow) : IRequestH
         {
             RecordDate = DateTime.Now,
             MessageFormat = request.MessageFormat,
-            RetryCount = request.RetryCount,
+            MaxRetryCount = request.MaxRetryCount,
             NotificationType = request.NotificationType,
             ServiceTestId = request.ServiceTestId,
             MessageSuccess = request.MessageSuccess

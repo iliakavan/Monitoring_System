@@ -14,7 +14,11 @@ public sealed class AppDbcontext(DbContextOptions<AppDbcontext> options) : DbCon
 
     public DbSet<ServiceTestLog> ServiceTestsLogs { get; set; }
 
+    public DbSet<TelegramMassageLog> TelegramMassageLogs { get; set; }
+
     public DbSet<Users> Users { get; set; }
+
+    public DbSet<ErrorLog> Errors { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -8,7 +8,7 @@
 
 public class ServiceNotfications : BaseEntity
 {
-    public int RetryCount {  get; set; }
+    public int RetryCount { get; set; } = 0;
 
     public int ServiceTestId {  get; set; }
 
@@ -21,5 +21,9 @@ public class ServiceNotfications : BaseEntity
     public required string MessageFormat {  get; set; }
 
     public required string MessageSuccess {  get; set; }
+
+    public int ErrorRetryCount {  get; set; } = 0;
+
+    public int MaxRetryCount { get; set; } = 50;
 
 }

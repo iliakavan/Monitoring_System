@@ -30,7 +30,7 @@ public class ServiceTestController(IMediator mediator) : ControllerBase
 
     [HttpGet]
     [Route("GetServiceTest")]
-    [Authorize(Roles = "Admin, Manager")]
+    [Authorize(Roles = "User,Admin, Manager")]
 
     public async Task<IActionResult> GetServiceTestById([FromQuery] GetServiceTestByIdQueryRequest request) 
     {

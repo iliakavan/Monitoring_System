@@ -1,59 +1,51 @@
-﻿using Hangfire;
-using notifier.Application.ServiceTests.Command.TestServices;
+﻿using notifier.Application.ServiceTests.Command.TestServices;
+using notifier.Domain.Dto;
 using notifier.Domain.UnitOfWork;
 
-namespace notifier.Hangfire
+
+namespace notifier.Hangfire;
+
+
+public interface IHangfireMethods
 {
-    public interface IHangfireMethods
+    void TestServices();
+    void Run();
+
+}
+
+public class HangfireMethods : IHangfireMethods
+{
+    private readonly IMediator mediator;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly IRecurringJobManager _recurringJobManager;
+
+    public HangfireMethods(
+        IMediator mediator, 
+        IRecurringJobManager recurringJobManager,
+        IServiceScopeFactory serviceScopeFactory)
     {
-        void TestServices(int time);
-        Task Run();
+        this.mediator = mediator;
+        _serviceScopeFactory = serviceScopeFactory;
+        _recurringJobManager = recurringJobManager;
+    }
+    public void TestServices()
+    {
+        var jobid = $"Service Test";
+        _recurringJobManager.AddOrUpdateDynamic(jobid, () => TestServicesJob(),
+            $"*/1 * * * *",
+            new DynamicRecurringJobOptions
+            {
+                TimeZone = TimeZoneInfo.Local
+            });
     }
 
-    public class HangfireMethods : IHangfireMethods
+    public void Run() 
     {
-        private readonly IMediator mediator;
-        private readonly IBackgroundJobClient backgroundJobClient;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
+        TestServices();
+    }
 
-        public HangfireMethods(
-            IMediator mediator, 
-            IBackgroundJobClient backgroundJobClient,
-            IServiceScopeFactory serviceScopeFactory)
-        {
-            this.mediator = mediator;
-            this.backgroundJobClient = backgroundJobClient;
-            _serviceScopeFactory = serviceScopeFactory;
-        }
-        public void TestServices(int times)
-        {
-            
-            RecurringJob.AddOrUpdate("TestServices", () => TestServicesJob(),
-                $"*/{times} * * * *",
-                new RecurringJobOptions
-                {
-                    TimeZone = TimeZoneInfo.Local
-                });
-        }
-
-        public async Task Run() 
-        {
-            using var Scoped = _serviceScopeFactory.CreateScope();
-            using var unitOfWork = Scoped.ServiceProvider.GetService<IUnitsOfWorks>();
-            var Times = await unitOfWork!.ServiceTestRepo.GetPeriodTime();
-
-            foreach(var time in Times) 
-            {
-                TestServices(time);
-            }
-        }
-        
-        public void TestServicesJob()
-        {
-            mediator.Send(new TestServicesCommand()).GetAwaiter().GetResult();
-        }
-
-        
-
+    public async Task TestServicesJob()
+    {
+        await mediator.Send(new TestServicesCommand());
     }
 }

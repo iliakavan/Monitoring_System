@@ -30,6 +30,11 @@ public class ServiceNotificationRepository(AppDbcontext context) : IServiceNotif
     {
         return await _context.ServiceNotfications.Where(S =>  S.Id == id).FirstOrDefaultAsync();
     }
+    public async Task<int> GetMaxRetryCount(int serviceNotifID)
+    {
+        return await _context.ServiceNotfications.AsQueryable().Where(s => s.Id == serviceNotifID).Select(s => s.MaxRetryCount).FirstOrDefaultAsync();
+    }
+
 
     public async Task<IEnumerable<ServiceNotificationDto?>> Search(DateTime? StartDate, DateTime? EndDate,NotificationType? notifeType,int? ServiceTestId,int? ServiceId,int? ProjectId)
     {

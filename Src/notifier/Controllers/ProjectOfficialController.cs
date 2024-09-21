@@ -28,7 +28,7 @@ public class ProjectOfficialController(IMediator mediator) : ControllerBase
 
     [HttpGet]
     [Route("ById")]
-    [Authorize(Roles = "Admin,Manager")]
+    [Authorize(Roles = "User,Admin,Manager")]
 
     public async Task<IActionResult> GetProjectOfficialById([FromQuery] GetProjectOfficialByIdQueryRequest request)
     {
