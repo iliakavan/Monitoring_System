@@ -17,6 +17,7 @@ public class ServiceRepository(AppDbcontext context) : IServiceRepository
     public async Task Add(Service model)
     {
         await _context.Services.AddAsync(model);
+
     }
 
     public void Delete(Service model)
